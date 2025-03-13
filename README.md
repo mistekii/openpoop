@@ -1,4 +1,4 @@
-# ytp-machine
+# OpenPoop
 ytp generator in python 3, beta ver 2
 
 the moviepy library (can be installed via pip) is required
