@@ -1,4 +1,4 @@
-import ffmpeg, json, random, subprocess, sox, numpy, os
+import ffmpeg, json, random, subprocess, os, sox
 from glob import glob
 
 # load the main config.json and convert to python dict
@@ -41,11 +41,20 @@ clip_video_processed = (
 
 clip_audio_processed = (    
     clip["streams"]["audio"]
-    .filter('atrim', duration=clip["duration"] / 2)
+    .filter("rubberband", pitch=2.559463094352953, tempo=2)
+    .filter("atrim", duration=clip["duration"] / 2)
+    .output("output/tmp/audio_processed.ogg")
+    .run(overwrite_output=True)
 )
+
+tfm = sox.Transformer() # <- i am, yet again, one of these
+tfm.reverse()
+tfm.build_file("output/tmp/audio_processed.ogg", "output/tmp/audio_processed1.ogg")
+
+# VICTORYYYYYYYYYYYYYYY
 
 (
     clip_video_processed
-    .output(clip_audio_processed, "output/output.mp4")
+    .output(ffmpeg.input("output/tmp/audio_processed1.ogg"), "output/output.mp4")
     .run(overwrite_output=True, quiet=False)
 )
